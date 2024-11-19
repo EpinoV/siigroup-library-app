@@ -12,10 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 @AllArgsConstructor
@@ -26,6 +24,7 @@ public class BookServiceImpl implements BookService {
     @Transactional
     @Override
     public BookDTO newBook(BookDTO book) {
+        log.info("newBook");
         repository.findByIsbn(book.getIsbn())
                 .ifPresent(existingBook -> {
                     throw new BookException(ConstantsUtil.ERROR_MESSAGE_EXISTING_ISBN);
@@ -36,7 +35,6 @@ public class BookServiceImpl implements BookService {
     @Override
     public List<BookDTO> getAllBooks() {
         log.info("getAllBooks");
-
         return Optional.of(
                         repository.findAll()
                 )
@@ -46,13 +44,14 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookDTO getBook(Long bookId) {
-
+        log.info("getBook by id");
         return BookMapper.INSTANCE.entityToDTO(repository.findById(bookId)
                 .orElseThrow(() -> new BookException(ConstantsUtil.ERROR_MESSAGE_BOOK_NOT_FOUND)));
     }
 
     @Override
     public BookDTO getBook(String isbn) {
+        log.info("getBook by isbn");
         return BookMapper.INSTANCE.entityToDTO(repository.findByIsbn(isbn)
                 .orElseThrow(() -> new BookException(ConstantsUtil.ERROR_MESSAGE_BOOK_NOT_FOUND)));
     }
@@ -60,6 +59,7 @@ public class BookServiceImpl implements BookService {
     @Transactional
     @Override
     public BookDTO updateBook(BookDTO book, Long bookId) {
+        log.info("updateBook");
         Book existingBook = repository.findById(bookId)
                 .orElseThrow(() -> new BookException(ConstantsUtil.ERROR_MESSAGE_NO_DATA_FOUND));
 
@@ -75,6 +75,7 @@ public class BookServiceImpl implements BookService {
     @Transactional
     @Override
     public Boolean deleteBook(Long id) {
+        log.info("deleteBook by id");
         return repository.findById(id)
                 .map(etty -> {
                     repository.deleteById(id);
