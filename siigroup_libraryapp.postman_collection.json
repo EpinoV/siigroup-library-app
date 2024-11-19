@@ -89,7 +89,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"title\": \"El señor de los anillos, la comunidad del anillo\",\n    \"author\": \"J.R.R. Tolkien\",\n    \"isbn\": \"9788445009598\",\n    \"category\": \"Ciencia ficción\",\n    \"available\": true\n}",
+					"raw": "{\n    \"title\": \"El señor de los anillos, la comunidad del anillo\",\n    \"author\": \"J.R.R. Tolkien\",\n    \"isbn\": \"9788445009599\",\n    \"category\": \"Ciencia ficción\",\n    \"available\": false\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -120,7 +120,7 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8089/library-app/api/v1/books/1",
+					"raw": "http://localhost:8089/library-app/api/v1/books/-4",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -131,7 +131,7 @@
 						"api",
 						"v1",
 						"books",
-						"1"
+						"-4"
 					]
 				}
 			},
