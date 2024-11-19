@@ -58,7 +58,7 @@ public class BookController {
 
     @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<BookDTO> updateBook(
-            @Valid @RequestBody BookDTO book, @PathVariable Long id
+            @Valid @RequestBody BookDTO book, @PathVariable(value = "id") Long id
     ){
         log.info("actualiza libro");
 
@@ -67,9 +67,9 @@ public class BookController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @DeleteMapping(value = "/deleteBook", produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> deleteBook(
-            @RequestParam(value = "id") Long id
+            @PathVariable(value = "id") Long id
     ){
         log.info("eliminar libro por id");
 
