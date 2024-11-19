@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Controller principal de manejo de operaciones CRUD de Libros
+ */
 @RestController
 @RequestMapping("/library-app/api/v1/books")
 @AllArgsConstructor
@@ -33,8 +36,8 @@ public class BookController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/allBooks", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<BookDTO>> allBooks(){
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<BookDTO>> getAllBooks(){
         log.info("Todos los libros");
 
         List<BookDTO> result = service.getAllBooks();
@@ -42,35 +45,35 @@ public class BookController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/bookByEmail", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<BookDTO> bookByEmail(
-            @RequestParam(value = "email") String email
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<BookDTO> getBookById(
+            @PathVariable(value = "id") Long id
     ){
-        log.info("Todos los libros");
+        log.info("Obtener un libro por id");
 
-        BookDTO result = service.getBook(email);
+        BookDTO result = service.getBook(id);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @PutMapping(value = "/updateBook", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<BookDTO> updateBook(
-            @Valid @RequestBody BookDTO book
+            @Valid @RequestBody BookDTO book, @PathVariable Long id
     ){
         log.info("actualiza libro");
 
-        BookDTO result = service.updateBook(book);
+        BookDTO result = service.updateBook(book, id);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/deleteBook", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<BookDTO> deleteBook(
-            @RequestParam(value = "email") String email
+    public ResponseEntity<Boolean> deleteBook(
+            @RequestParam(value = "id") Long id
     ){
-        log.info("Todos los libros");
+        log.info("eliminar libro por id");
 
-        BookDTO result = service.getBook(email);
+        Boolean result = service.deleteBook(id);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }

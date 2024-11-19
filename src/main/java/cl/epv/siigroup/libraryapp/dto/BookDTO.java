@@ -32,11 +32,6 @@ public class BookDTO {
     private String isbn;
 
     /**
-     * Fecha de publicación
-     */
-    private LocalDate publishedDate;
-
-    /**
      * Categoría o género
      */
     private String category;

@@ -10,6 +10,7 @@ import cl.epv.siigroup.libraryapp.util.ConstantsUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,17 +23,14 @@ import java.util.concurrent.atomic.AtomicReference;
 public class BookServiceImpl implements BookService {
     private final BookRepository repository;
 
+    @Transactional
     @Override
     public BookDTO newBook(BookDTO book) {
-        AtomicReference<BookDTO> dto = new AtomicReference<>();
-        Optional.ofNullable(
-                        BookMapper.INSTANCE.dtoToEntity(book)
-                )
-                .ifPresent(etty -> {
-                            dto.set(BookMapper.INSTANCE.entityToDTO(repository.saveAndFlush(etty)));
-                        }
-                );
-        return dto.get();
+        repository.findByIsbn(book.getIsbn())
+                .ifPresent(existingBook -> {
+                    throw new BookException(ConstantsUtil.ERROR_MESSAGE_EXISTING_ISBN);
+                });
+        return BookMapper.INSTANCE.entityToDTO(repository.saveAndFlush(BookMapper.INSTANCE.dtoToEntity(book)));
     }
 
     @Override
@@ -43,44 +41,45 @@ public class BookServiceImpl implements BookService {
                         repository.findAll()
                 )
                 .map(BookMapper.INSTANCE::entityListToDTOList)
-                .orElse(new ArrayList<>());
+                .orElseThrow(() -> new BookException(ConstantsUtil.ERROR_MESSAGE_NO_DATA_FOUND));
     }
 
     @Override
     public BookDTO getBook(Long bookId) {
-        return Optional.ofNullable(
-                        repository.findById(bookId).get()
-                )
-                .map(BookMapper.INSTANCE::entityToDTO)
-                .orElseThrow(() -> new BookException(ConstantsUtil.ERROR_MESSAGE_NO_DATA_FOUND));
+
+        return BookMapper.INSTANCE.entityToDTO(repository.findById(bookId)
+                .orElseThrow(() -> new BookException(ConstantsUtil.ERROR_MESSAGE_BOOK_NOT_FOUND)));
     }
 
     @Override
     public BookDTO getBook(String isbn) {
-        return Optional.ofNullable(
-                        repository.findByToIsbn(isbn).get()
-                )
-                .map(BookMapper.INSTANCE::entityToDTO)
-                .orElseThrow(() -> new BookException(ConstantsUtil.ERROR_MESSAGE_NO_DATA_FOUND));
+        return BookMapper.INSTANCE.entityToDTO(repository.findByIsbn(isbn)
+                .orElseThrow(() -> new BookException(ConstantsUtil.ERROR_MESSAGE_BOOK_NOT_FOUND)));
     }
 
+    @Transactional
     @Override
-    public BookDTO updateBook(BookDTO book) {
-        Book updateUser = repository.findById(book.getId())
+    public BookDTO updateBook(BookDTO book, Long bookId) {
+        Book existingBook = repository.findById(bookId)
                 .orElseThrow(() -> new BookException(ConstantsUtil.ERROR_MESSAGE_NO_DATA_FOUND));
 
-        AtomicReference<BookDTO> dto = new AtomicReference<>();
-        Optional.of(
-                        updateUser
-                )
-                .ifPresent(etty ->
-                        dto.set(BookMapper.INSTANCE.entityToDTO(repository.saveAndFlush(etty)))
-                );
-        return dto.get();
+        existingBook.setTitle(book.getTitle());
+        existingBook.setAuthor(book.getAuthor());
+        existingBook.setIsbn(book.getIsbn());
+        existingBook.setCategory(book.getCategory());
+        existingBook.setAvailable(book.getAvailable());
+
+        return BookMapper.INSTANCE.entityToDTO(repository.saveAndFlush(existingBook));
     }
 
+    @Transactional
     @Override
     public Boolean deleteBook(Long id) {
-        return null;
+        return repository.findById(id)
+                .map(etty -> {
+                    repository.deleteById(id);
+                    return Boolean.TRUE;
+                })
+                .orElse(Boolean.FALSE);
     }
 }

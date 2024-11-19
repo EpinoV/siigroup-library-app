@@ -4,6 +4,9 @@ import cl.epv.siigroup.libraryapp.dto.BookDTO;
 
 import java.util.List;
 
+/**
+ * Servicio que implementa crud de Libros (Book)
+ */
 public interface BookService {
 
     /**
@@ -37,9 +40,10 @@ public interface BookService {
     /**
      * Actualiza la información de un libro existente a través de su id
      * @param book
+     * @param bookId
      * @return
      */
-    BookDTO updateBook(BookDTO book);
+    BookDTO updateBook(BookDTO book, Long bookId);
 
 
     /**

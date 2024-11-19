@@ -103,6 +103,19 @@
 					</compilerArgs>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.5.0</version> <!-- Usa la última versión disponible -->
+				<configuration>
+					<source>${java.version}</source> <!-- Asegúrate de indicar la versión de Java -->
+					<show>private</show> <!-- Incluye métodos privados en la documentación -->
+					<doclint>none</doclint> <!-- Suprime advertencias estrictas en Java 17 -->
+					<failOnError>false</failOnError> <!-- No fallar si hay errores -->
+					<additionalJOption>-encoding UTF-8</additionalJOption>
+					<additionalJOption>-charset UTF-8</additionalJOption>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
